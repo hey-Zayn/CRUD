@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
     Table,
     TableBody,
@@ -27,6 +27,7 @@ const Home = () => {
             try {
                 const res = await axiosInstance.get('/users');
 
+                console.log(res.data.user);
 
                 dispatch(fetchUsers(res.data.user));
             } catch (error) {
@@ -35,7 +36,7 @@ const Home = () => {
             }
         }
         fetchData();
-    }, [])
+    }, [dispatch]);
 
     return (
         <div className='flex justify-center items-center h-screen w-full'>
@@ -57,19 +58,23 @@ const Home = () => {
                     </TableHeader>
                     <TableBody>
                         {
-                            user.map((user, idx) => (
-                                <TableRow key={idx}>
-                                    <TableCell className="font-medium">{idx + 1}</TableCell>
-                                    <TableCell>{user.name}</TableCell>
-                                    <TableCell>{user.phone}</TableCell>
-                                    <TableCell>{user.email}</TableCell>
+                          Array.isArray(user) && user.map((u) => (
+                                <TableRow key={u._id}>
+                                    <TableCell className="font-medium">{u._id}</TableCell>
+                                    <TableCell>{u.name}</TableCell>
+                                    <TableCell>{u.phone}</TableCell>
+                                    <TableCell>{u.email}</TableCell>
                                     <TableCell className="text-right"><Avatar>
-                                        <AvatarImage src={user.image} />
+                                        <AvatarImage src={u.image} />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar></TableCell>
                                     <TableCell>
                                         <div className='flex gap-2 justify-end'>
-                                            <Button variant="outline">Edit</Button>
+                                            <Link to={`/update/` + u._id}>
+                                                <Button variant="outline" >
+                                                    Edit
+                                                </Button>
+                                            </Link>
                                             <Button variant="destructive">Delete</Button>
                                         </div>
                                     </TableCell>
